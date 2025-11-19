@@ -202,6 +202,30 @@
                 opacity: 0;
             }
         }
+        /* --- Confetti CSS --- */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 15px;
+    opacity: 0;
+    will-change: transform, opacity; /* Optimization */
+    pointer-events: none;
+}
+
+@keyframes confetti-fall {
+    0% {
+        opacity: 1;
+        transform: translateY(-10vh) rotateZ(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotateZ(180deg);
+    }
+    100% {
+        opacity: 0.5;
+        transform: translateY(110vh) rotateZ(360deg);
+    }
+}
+/* -------------------- */
 
         @media (max-width: 768px) {
             .glowing-heart {
@@ -236,112 +260,138 @@
     </div>
 
     <script>
-        // Create sparkles around the heart
-        function createSparkle() {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkles';
-            sparkle.innerHTML = ['✨', '⭐', '🌟', '💫'][Math.floor(Math.random() * 4)];
-            
-            const heartContainer = document.querySelector('.heart-container');
-            const rect = heartContainer.getBoundingClientRect();
-            
-            sparkle.style.left = (rect.left + Math.random() * rect.width) + 'px';
-            sparkle.style.top = (rect.top + Math.random() * rect.height) + 'px';
-            sparkle.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.body.appendChild(sparkle);
-            
-            setTimeout(() => {
-                sparkle.remove();
-            }, 4000);
-        }
+    // --- Confetti Functions ---
+    function createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Set random color (matching your theme)
+        const colors = ['#ff6b9d', '#fecfef', '#f8b500', '#c44569'];
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Set random start position
+        confetti.style.left = Math.random() * 100 + 'vw'; 
+        confetti.style.top = -10 + 'vh'; // Start off-screen
+        
+        // Set random animation duration and delay
+        const duration = 2 + Math.random() * 3; 
+        const delay = Math.random() * 1; 
+        
+        confetti.style.animation = `confetti-fall ${duration}s ease-in ${delay}s forwards`;
 
-        // Create floating hearts
-        function createFloatingHeart() {
-            const heart = document.createElement('div');
-            heart.className = 'floating-hearts';
-            heart.innerHTML = ['💕', '❤️', '💖', '💝', '💗'][Math.floor(Math.random() * 5)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
-            heart.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.body.appendChild(heart);
-            
-            setTimeout(() => {
-                heart.remove();
-            }, 6000);
-        }
+        document.body.appendChild(confetti);
+        
+        // Remove confetti after animation finishes
+        setTimeout(() => {
+            confetti.remove();
+        }, (duration + delay) * 1000);
+    }
 
-        // Heart burst effect when clicked
-        function createHeartBurst() {
-            const mainHeart = document.getElementById('mainHeart');
-            mainHeart.style.animation = 'heartExplosion 0.6s ease';
-            
-            // Create burst of hearts
-            for (let i = 0; i < 12; i++) {
+    function launchConfetti(count = 80) {
+        for (let i = 0; i < count; i++) {
+            createConfetti();
+        }
+    }
+    // ----------------------------
+    
+    // Create sparkles around the heart (EXISTING)
+    function createSparkle() {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkles';
+        sparkle.innerHTML = ['✨', '⭐', '🌟', '💫'][Math.floor(Math.random() * 4)];
+        
+        const heartContainer = document.querySelector('.heart-container');
+        const rect = heartContainer.getBoundingClientRect();
+        
+        sparkle.style.left = (rect.left + Math.random() * rect.width) + 'px';
+        sparkle.style.top = (rect.top + Math.random() * rect.height) + 'px';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        
+        document.body.appendChild(sparkle);
+        
+        setTimeout(() => {
+            sparkle.remove();
+        }, 4000);
+    }
+
+    // Create floating hearts (EXISTING)
+    function createFloatingHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'floating-hearts';
+        heart.innerHTML = ['💕', '❤️', '💖', '💝', '💗'][Math.floor(Math.random() * 5)];
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        heart.style.animationDelay = Math.random() * 2 + 's';
+        
+        document.body.appendChild(heart);
+        
+        setTimeout(() => {
+            heart.remove();
+        }, 6000);
+    }
+
+    // Heart burst effect when clicked (UPDATED to include Confetti)
+    function createHeartBurst() {
+        const mainHeart = document.getElementById('mainHeart');
+        mainHeart.style.animation = 'heartExplosion 0.6s ease';
+        
+        // Create burst of hearts
+        for (let i = 0; i < 12; i++) {
+            setTimeout(() => {
+                const burstHeart = document.createElement('div');
+                burstHeart.innerHTML = '💖';
+                burstHeart.style.position = 'absolute';
+                burstHeart.style.left = '50%';
+                burstHeart.style.top = '50%';
+                burstHeart.style.fontSize = '2rem';
+                burstHeart.style.color = '#ff1744';
+                burstHeart.style.pointerEvents = 'none';
+                burstHeart.style.zIndex = '20';
+                
+                // Set random CSS variables for burst end position
+                burstHeart.style.setProperty('--rand-x', (Math.random() * 400 - 200) + 'px');
+                burstHeart.style.setProperty('--rand-y', (Math.random() * 400 - 200) + 'px');
+                
+                burstHeart.style.animation = `
+                    burstOut 2s ease-out forwards
+                `;
+                
+                document.body.appendChild(burstHeart);
+                
                 setTimeout(() => {
-                    const burstHeart = document.createElement('div');
-                    burstHeart.innerHTML = '💖';
-                    burstHeart.style.position = 'absolute';
-                    burstHeart.style.left = '50%';
-                    burstHeart.style.top = '50%';
-                    burstHeart.style.fontSize = '2rem';
-                    burstHeart.style.color = '#ff1744';
-                    burstHeart.style.pointerEvents = 'none';
-                    burstHeart.style.zIndex = '20';
-                    
-                    const angle = (i / 12) * 2 * Math.PI;
-                    const distance = 200;
-                    const endX = Math.cos(angle) * distance;
-                    const endY = Math.sin(angle) * distance;
-                    
-                    burstHeart.style.animation = `
-                        burstOut 2s ease-out forwards
-                    `;
-                    
-                    document.body.appendChild(burstHeart);
-                    
-                    setTimeout(() => {
-                        burstHeart.remove();
-                    }, 2000);
-                }, i * 50);
-            }
+                    burstHeart.remove();
+                }, 2000);
+            }, i * 50);
         }
+        
+        // LAUNCH CONFETTI when the heart is clicked
+        launchConfetti(50); 
+    }
 
-        // Add burst animation to CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes burstOut {
-                0% {
-                    transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: translate(calc(-50% + ${Math.random() * 400 - 200}px), calc(-50% + ${Math.random() * 400 - 200}px)) scale(0.5) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+    // Generate sparkles and floating hearts continuously (EXISTING)
+    setInterval(createSparkle, 800);
+    setInterval(createFloatingHeart, 1200);
 
-        // Generate sparkles and floating hearts continuously
-        setInterval(createSparkle, 800);
-        setInterval(createFloatingHeart, 1200);
+    // Initial burst (EXISTING)
+    for (let i = 0; i < 8; i++) {
+        setTimeout(createSparkle, i * 200);
+        setTimeout(createFloatingHeart, i * 300);
+    }
 
-        // Initial burst
-        for (let i = 0; i < 8; i++) {
-            setTimeout(createSparkle, i * 200);
-            setTimeout(createFloatingHeart, i * 300);
-        }
-
-        // Random heart size variations
-        setInterval(() => {
-            const mainHeart = document.getElementById('mainHeart');
-            const scale = 0.9 + Math.random() * 0.2;
-            mainHeart.style.transform = `scale(${scale})`;
-        }, 3000);
-    </script>
+    // Random heart size variations (EXISTING)
+    setInterval(() => {
+        const mainHeart = document.getElementById('mainHeart');
+        const scale = 0.9 + Math.random() * 0.2;
+        mainHeart.style.transform = `scale(${scale})`;
+    }, 3000);
+    
+    // --- New: Launch Confetti on Page Load ---
+    window.addEventListener('load', () => {
+        launchConfetti(80); // Launches a gentle shower when the page first opens
+    });
+</script>
 </body>
 
 </html>
+
 

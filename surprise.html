@@ -202,6 +202,19 @@
                 opacity: 0;
             }
         }
+        /* --- Insert this into your <style> block in surprise.html --- */
+
+@keyframes burstOut {
+    0% {
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        /* Uses the random values set in the updated JavaScript */
+        transform: translate(calc(-50% + var(--rand-x)), calc(-50% + var(--rand-y))) scale(0.5) rotate(360deg);
+        opacity: 0;
+    }
+}
         /* --- Confetti CSS --- */
 .confetti {
     position: absolute;
@@ -393,5 +406,6 @@
 </body>
 
 </html>
+
 
 
